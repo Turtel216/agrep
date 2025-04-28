@@ -1,14 +1,5 @@
 # agrep 🔎
 
-```
-     _                          _     
-    / \   _ __ ___  __ _  ___  | |_ ___
-   / _ \ | '__/ _ \/ _` |/ _ \ | __/ _ \
-  / ___ \| | |  __/ (_| |  __/ | ||  __/
- /_/   \_\_|  \___|\__, |\___|  \__\___|
-                   |___/                
-```
-
 [![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/yourusername/agrep/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Haskell](https://img.shields.io/badge/language-haskell-5e5086.svg)](https://www.haskell.org/)
