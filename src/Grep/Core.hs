@@ -9,6 +9,7 @@ import Data.Text (Text)
 import System.Directory
 import Control.Exception
 import Data.Text.Internal.Search
+import System.FilePath ((</>))
 
 data LocationType = DirectoryType | FileType deriving (Eq, Show)
 
@@ -41,7 +42,12 @@ processSearching :: SearchType -> IO ()
 processSearching SearchType{..} = do
   case searchLocationType of
     FileType -> searchFile searchTerm searchLocation
-    DirectoryType -> undefined
+    DirectoryType -> do
+      files <- listDirectory searchLocation
+      mapM_ (\file -> do
+                res <- doesDirectoryExist (searchLocation </> file)
+                if res then processSearching (SearchType searchTerm (searchLocation </> file) DirectoryType)
+                  else searchFile searchTerm (searchLocation </> file)) files
 
 searchFile :: Text -> FilePath -> IO ()
 searchFile searchTerm searchLocation = do
