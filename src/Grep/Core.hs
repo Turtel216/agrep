@@ -7,6 +7,8 @@ import qualified Data.Text as T
 import           Data.Text (Text)
 import qualified Data.Text.IO as T
 import System.Directory
+import Control.Exception
+import Data.Text.Internal.Search
 
 data LocationType = DirectoryType | FileType deriving (Eq, Show)
 
@@ -42,4 +44,17 @@ processSearching SearchType{..} = do
     DirectoryType -> undefined
 
 searchFile :: Text -> FilePath -> IO ()
-searchFile = undefined
+searchFile searchTerm searchLocation = do
+  eContent <- try $ T.lines <$> T.readFile searchLocation :: IO (Either IOError [T.Text])
+  case eContent of
+    Left _ -> pure ()
+    Right content -> searchString searchTerm content
+
+searchString :: Text -> [Text] -> IO ()
+searchString searchTerm = mapM_ (\hayStack -> searchString' searchTerm hayStack)
+
+searchString' :: Text -> Text -> IO ()
+searchString' searchTerm hayStack = do
+  case indices searchTerm hayStack of
+    [] -> pure ()
+    _ -> T.putStrLn hayStack
