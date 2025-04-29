@@ -4,8 +4,8 @@ module Grep.Core where
 
 import qualified System.Environment as Sys
 import qualified Data.Text as T
-import           Data.Text (Text)
 import qualified Data.Text.IO as T
+import Data.Text (Text)
 import System.Directory
 import Control.Exception
 import Data.Text.Internal.Search
@@ -51,10 +51,12 @@ searchFile searchTerm searchLocation = do
     Right content -> searchString searchTerm content
 
 searchString :: Text -> [Text] -> IO ()
-searchString searchTerm = mapM_ (\hayStack -> searchString' searchTerm hayStack)
+searchString searchTerm content = searchString' searchTerm content 1
 
-searchString' :: Text -> Text -> IO ()
-searchString' searchTerm hayStack = do
+searchString' :: Text -> [Text] -> Int -> IO ()
+searchString' _ [] _ = pure ()
+searchString' searchTerm (hayStack:remainingLines) lineNumber = do
   case indices searchTerm hayStack of
-    [] -> pure ()
-    _ -> T.putStrLn hayStack
+    [] -> searchString' searchTerm remainingLines (lineNumber + 1)
+    _ -> (T.putStrLn $ T.pack (show lineNumber) <> "\t" <> hayStack)
+      >> searchString' searchTerm remainingLines (lineNumber + 1)
